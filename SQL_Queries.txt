@@ -1,0 +1,387 @@
+1. See No. of trains that have arrived
+
+
+create or replace procedure abc(hr number, min number, s number)
+ as
+ cursor c1 is
+ select train_no, st_id, arr_h, arr_min from stops_at where arr_h<hr and st_id=s or arr_h=hr and arr_min<min and st_id=s;
+ r2 c1%rowtype;
+ begin
+ open c1;
+ fetch c1 into r2;
+ loop
+ dbms_output.put_line(r2.train_no||' '||r2.st_id||' '||r2.arr_h||' '||r2.arr_min);
+ fetch c1 into r2;
+ exit when c1%notfound;
+ end loop;
+ close c1;
+ end;
+ /
+
+
+
+
+
+2. See No. of trains that are yet to arrive
+
+
+
+create or replace procedure bcd(hr number, min number, s number)
+as
+cursor c1 is
+select train_no,t_name, st_id, arr_h, arr_min from stops_at natural join train where arr_h>hr and st_id=s or arr_h=hr and arr_min>min and st_id=s;
+r2 c1%rowtype;
+begin
+dbms_output.put_line('Train_No'||' '||'   Train Name  '||'St_id'||' '||'Arr_H'||' '||'Arr_Min');
+open c1;
+fetch c1 into r2;
+loop
+dbms_output.put_line(r2.train_no||'    '||r2.t_name||' '||r2.st_id||'    '||r2.arr_h||'     '||r2.arr_min);
+fetch c1 into r2;
+exit when c1%notfound;
+end loop;
+close c1;
+end;
+/
+
+
+4. Trains that are yet to leave
+
+
+create or replace procedure abcd(hr number, min number, s number)
+ as
+ cursor c1 is
+ select train_no,t_name, st_id, arr_h, arr_min from stops_at natural join train where dep_h>hr and st_id=s or dep_h=hr and dep_min>min and st_id=s;
+ r2 c1%rowtype;
+ begin
+ open c1;
+ fetch c1 into r2;
+ loop
+ dbms_output.put_line(r2.train_no||' '||r2.t_name||' '||r2.st_id||' '||r2.arr_h||' '||r2.arr_min);
+ fetch c1 into r2;
+ exit when c1%notfound;
+ end loop;
+ close c1;
+ end;
+ /
+
+
+5. Details of incoming passengers who have arrived
+
+
+create or replace procedure abcde(hr number, min number, s_na varchar)
+as
+cursor c1 is
+select p_name, pnr_no, age, gender, train_no from train natural join pnr natural join passenger where pnr_no in( select pnr_no from pnr natural join stops_at where  (arr_h<hr  and p_destination=s_na)or ((arr_h=hr and arr_min<min) and p_destination=s_na));
+r2 c1%rowtype;
+begin
+dbms_output.put_line('NAME'||'  '||'PNR'||'  '||'AGE'||'  '||'GENDER'||'  '||'TRAIN_NO');
+open c1;
+fetch c1 into r2;
+loop
+dbms_output.put_line(r2.p_name||'  '||r2.pnr_no||'  '||r2.age||'  '||r2.gender||'  '||r2.train_no);
+fetch c1 into r2;
+exit when c1%notfound;
+end loop;
+close c1;
+end;
+/
+
+
+
+
+6. Details of incoming passengers who are yet to arrive
+
+
+create or replace procedure jhg(hr number, min number, s_na varchar)
+as
+cursor c1 is
+select p_name, pnr_no, age, gender, train_no from train natural join pnr natural join passenger where pnr_no in( select pnr_no from pnr natural join stops_at where  (arr_h>hr  and p_destination=s_na)or ((arr_h=hr and arr_min>min) and p_destination=s_na));
+r2 c1%rowtype;
+begin
+dbms_output.put_line('NAME'||'  '||'PNR'||'  '||'AGE'||'  '||'GENDER'||'  '||'TRAIN_NO');
+open c1;
+fetch c1 into r2;
+loop
+dbms_output.put_line(r2.p_name||'  '||r2.pnr_no||'  '||r2.age||'  '||r2.gender||'  '||r2.train_no);
+fetch c1 into r2;
+exit when c1%notfound;
+end loop;
+close c1;
+end;
+/
+
+7. Details of Passengers who are yet to leave
+
+
+create or replace procedure jhgo(hr number, min number, s_na varchar)
+as
+cursor c1 is
+select p_name, pnr_no, age, gender, train_no from train natural join pnr natural join passenger where pnr_no in( select pnr_no from pnr natural join stops_at where  (dep_h>hr  and p_source=s_na)or ((dep_h=hr and dep_min>min) and p_source=s_na));
+r2 c1%rowtype;
+begin
+dbms_output.put_line('NAME'||'  '||'PNR'||'  '||'AGE'||'  '||'GENDER'||'  '||'TRAIN_NO');
+open c1;
+fetch c1 into r2;
+loop
+dbms_output.put_line(r2.p_name||'  '||r2.pnr_no||'  '||r2.age||'  '||r2.gender||'  '||r2.train_no);
+fetch c1 into r2;
+exit when c1%notfound;
+end loop;
+close c1;
+end;
+/
+
+8. Details of Passengers who have left
+
+create or replace procedure jhgi(hr number, min number, s_na varchar)
+as
+cursor c1 is
+select p_name, pnr_no, age, gender, train_no from train natural join pnr natural join passenger where pnr_no in( select pnr_no from pnr natural join stops_at where  (dep_h<hr  and p_source=s_na)or ((dep_h=hr and dep_min<min) and p_source=s_na));
+r2 c1%rowtype;
+begin
+dbms_output.put_line('NAME'||'  '||'PNR'||'  '||'AGE'||'  '||'GENDER'||'  '||'TRAIN_NO');
+open c1;
+fetch c1 into r2;
+loop
+dbms_output.put_line(r2.p_name||'  '||r2.pnr_no||'  '||r2.age||'  '||r2.gender||'  '||r2.train_no);
+fetch c1 into r2;
+exit when c1%notfound;
+end loop;
+close c1;
+end;
+/
+
+
+9. On inserting/updating
+
+
+create or replace trigger on_add
+AFTER insert or update or delete on stops_at
+for each row
+declare
+t_no train.train_no%type;
+t_na train.t_name%type;
+t_or train.origin%type;
+t_dest train.destination%type;
+st_no station.st_id%type;
+st_na station.s_name%type;
+ah stops_at.arr_h%type;
+am stops_at.arr_min%type;
+dh stops_at.dep_h%type;
+dm stops_at.dep_min%type;
+BEGIN
+if INSERTING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('NEW TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('STOPS AT STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('Arrival Time: '|| :new.arr_h || 'hours' || :new.arr_min || 'min');
+dbms_output.put_line('Departure Time: '|| :new.dep_h || 'hours' || :new.dep_min || 'min');
+ELSIF UPDATING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('TRAIN OLD TIMINGS:');
+dbms_output.put_line('Arrival Time: '|| :old.arr_h || 'hours' || :old.arr_min || 'min');
+dbms_output.put_line('Departure Time: '|| :old.dep_h || 'hours' || :old.dep_min || 'min');
+dbms_output.put_line('TRAIN NEW TIMINGS:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('STOPS AT STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('WITH NEW TIMINGS:');
+dbms_output.put_line('Arrival Time: '|| :new.arr_h || 'hours' || :new.arr_min || 'min');
+dbms_output.put_line('Departure Time: '|| :new.dep_h || 'hours' || :new.dep_min || 'min');
+ELSIF DELETING then
+dbms_output.put_line('TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('NOW DOES NOT STOP AT STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('Added Deleted Info to stops_passes_backup');
+insert into stops_passes_backup values( :old.train_no , :old.st_id );
+END if;
+END;
+/
+
+
+
+
+
+
+10.
+
+create or replace trigger on_add_passes
+AFTER insert or update or delete on passes_by
+for each row
+declare
+t_no train.train_no%type;
+t_na train.t_name%type;
+t_or train.origin%type;
+t_dest train.destination%type;
+st_no station.st_id%type;
+st_na station.s_name%type;
+ph passes_by.pass_h%type;
+pm passes_by.pass_min%type;
+BEGIN
+if INSERTING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('NEW TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('PASSES BY STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('PASS Time: '|| :new.pass_h || 'hours' || :new.pass_min || 'min');
+ELSIF UPDATING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('TRAIN OLD PASS TIME:');
+dbms_output.put_line('PASS Time: '|| :old.pass_h || 'hours' || :old.pass_min || 'min');
+dbms_output.put_line('TRAIN NEW TIMINGS:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('PASSES BY STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('WITH NEW TIMING:');
+dbms_output.put_line('PASS Time: '|| :new.pass_h || 'hours' || :new.pass_min || 'min');
+ELSIF DELETING then
+dbms_output.put_line('TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('NOW DOES NOT PASS STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('Added Deleted Info to stops_passes_backup');
+insert into stops_passes_backup values( :old.train_no , :old.st_id );
+END if;
+END;
+/
+
+
+
+11.
+
+create or replace trigger new_passenger
+before insert on passenger
+for each row
+declare
+n pnr.no_of_pass%type;
+tn pnr.train_no%type;
+s pnr.p_source%type;
+d pnr.p_destination%type;
+BEGIN
+if INSERTING then
+select no_of_pass,train_no, p_source, p_destination into n, tn, s, d from pnr where pnr_no = :new.pnr_no;
+dbms_output.put_line('Passenger Details:');
+dbms_output.put_line('Passenger Name: '|| :new.p_name);
+dbms_output.put_line('Passenger Age: '|| :new.age);
+dbms_output.put_line('Passenger Gender: '|| :new.gender);
+dbms_output.put_line('Passenger Coach: '|| :new.coach);
+dbms_output.put_line('Passenger Seat: '|| :new.seat);
+dbms_output.put_line('Travells In Train: ' || tn);
+dbms_output.put_line('Source: ' || s);
+dbms_output.put_line('Destination: ' || d);
+END if;
+END;
+/
+
+dbms_output.put_line('Travelling with ' || n-1 || 'other passengers of same PNR');
+
+
+12. On adding to passes_by, displays train_info
+
+
+
+create or replace trigger on_add_passes
+AFTER insert or update or delete on passes_by
+for each row
+declare
+t_no train.train_no%type;
+t_na train.t_name%type;
+t_or train.origin%type;
+t_dest train.destination%type;
+st_no station.st_id%type;
+st_na station.s_name%type;
+ph passes_by.pass_h%type;
+pm passes_by.pass_min%type;
+BEGIN
+if INSERTING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('NEW TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('PASSES BY STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('PASS Time: '|| :new.pass_h || 'hours' || :new.pass_min || 'min');
+ELSIF UPDATING then
+select train_no, t_name, origin, destination into t_no, t_na, t_or, t_dest from train where train_no = :new.train_no;
+select st_id, s_name into st_no, st_na from station where st_id = :new.st_id;
+dbms_output.put_line('TRAIN OLD PASS TIME:');
+dbms_output.put_line('PASS Time: '|| :old.pass_h || 'hours' || :old.pass_min || 'min');
+dbms_output.put_line('TRAIN NEW TIMINGS:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('Train Origin: '|| t_or);
+dbms_output.put_line('Train Destination: '|| t_dest);
+dbms_output.put_line('PASSES BY STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('WITH NEW TIMING:');
+dbms_output.put_line('PASS Time: '|| :new.pass_h || 'hours' || :new.pass_min || 'min');
+ELSIF DELETING then
+dbms_output.put_line('TRAIN:');
+dbms_output.put_line('Train No: '|| t_no);
+dbms_output.put_line('Train Name: '|| t_na);
+dbms_output.put_line('NOW DOES NOT PASS STATION:');
+dbms_output.put_line('Station ID: '|| st_no);
+dbms_output.put_line('Station Name: '|| st_na);
+dbms_output.put_line('Added Deleted Info to stops_passes_backup');
+insert into stops_passes_backup values( :old.train_no , :old.st_id );
+END if;
+END;
+/
+
+
+
+13. Adding a temporary value to passnger table when new table is created
+
+create or replace trigger new_pnr
+before insert on pnr
+for each row
+BEGIN
+dbms_output.put_line('Travelling in:' || :new.train_no);
+for i in 1..:new.no_of_pass loop
+insert into passenger values(:new.pnr_no, 'temp', NULL, NULL, NULL, NULL);
+end loop;
+END;
+/
+
+14. No. of passengers with source a particular station
+
+ select count(*) from passenger natural join pnr where p_source=&source;
+
+15.
+
+select count(*) from passenger natural join pnr where p_destination=&destination;
+
